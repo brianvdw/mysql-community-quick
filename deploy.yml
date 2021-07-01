@@ -1,0 +1,43 @@
+---
+- name: download epel-release
+   yum:
+     name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
+     state: present
+- name: delete mariadb
+   yum:
+     name: mariadb-libs
+ 9    state: removed
+10- name: install mysql
+11  yum:
+12    name: "{{ item }}"
+13    state: present
+14  with_items:
+15    - mysql-community-devel*
+16    - mysql-community-server*
+17    - MySQL-python
+18- name: copy my.cnf
+19  copy:
+20    src: ../files/etc/my.cnf
+21    dest: /etc/my.cnf
+22    mode: 0644
+23- name: enable mysql
+24  systemd:
+25    name: mysqld
+26    state: restarted
+27    enabled: yes
+28- name: get root password
+29  shell: "grep 'A temporary password is generated for root@localhost' /var/log/mysqld.log | awk -F ' ' '{print $(NF)}'"
+30  register: root_password
+31- name: update expired root user password
+32  command: mysql --user root --password={{ root_password.stdout }} --connect-expired-password --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql.root.password }}';"
+33- name: create mysql client user
+34  mysql_user:
+35    login_user: root
+36    login_password: "{{ mysql.root.password }}"
+37    name: "{{ item.name }}"
+38    password: "{{ item.password }}"
+39    priv: '*.*:ALL,GRANT'
+40    state: present
+41    host: '%'
+42  with_items:
+43    - "{{ mysql.users }}"
