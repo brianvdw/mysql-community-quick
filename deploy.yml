@@ -5,7 +5,7 @@
     mysql_root_password: "NewPassword123$"
     mysql_users:
       - name: DatacomDBA
-        host: "%"
+        host: "localhost"
         password: "DatacomDBA123$"
         priv: "*.*:ALL,GRANT"
 
@@ -45,22 +45,25 @@
   - debug:
      msg:  "temp password: {{ root_password.stdout_lines[0] }}"
 
-  - debug:
+  - debug: 
      msg:  "new password: {{ mysql_root_password }}"
 
   - name: update expired root user password
     command: mysql --user root --password={{ root_password.stdout }} --connect-expired-password --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';"
   
+  - debug: 
+     msg:  "new password: {{ mysql_root_password }}"
+
   - name: Ensure MySQL users are present.
     mysql_user:
-      login_user: root
-      login_password: "{{ mysql_root_password }}"
-      name: "{{ item.name }}"
+      login_user: 'root'
+      login_password: '{{ mysql_root_password }}'
+      name: '{{ item.name }}'
       host: "{{ item.host | default('localhost') }}"
       password: "{{ item.password }}"
       priv: "{{ item.priv | default('*.*:USAGE') }}"
-      state: "{{ item.state | default('present') }}"
-      append_privs: "{{ item.append_privs | default('no') }}"
-      encrypted: "{{ item.encrypted | default('no') }}"
+      state: "present"
+      append_privs: "no"
+      encrypted: "no"
     with_items: "{{ mysql_users }}"
     #no_log: true
