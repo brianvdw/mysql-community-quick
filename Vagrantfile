@@ -9,9 +9,10 @@ Vagrant.configure('2') do |config|
 
   config.vm.define 'mysql1' do |machine|
      #machine.vm.box = "ub18LTS"
-     machine.vm.box = "centos7"
+     #machine.vm.box = "centos7"
      #machine.vm.box = "rhel7"
      #machine.vm.box = "generic/rhel7"
+     machine.vm.box = "bento/centos-7"
   
      machine.vm.hostname = "mysql1.home"
      #machine.vm.synced_folder "/DatabaseMedia/", "/DatabaseMedia"

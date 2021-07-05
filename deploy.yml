@@ -4,29 +4,29 @@
   vars:
     mysql_root_password: "NewPassword123$"
     mysql_users:
-      - name: DatacomDBA
+      - name: MasterDba
         host: "localhost"
-        password: "DatacomDBA123$"
+        password: "MasterDba123$"
         priv: "*.*:ALL,GRANT"
 
 
   tasks:
-  - name: download epel-release
+  - name: download and install Mysql 8 Repo 
     yum:
        name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
        state: present
   
-  - name: delete mariadb
+  - name: delete mariadb libs
     yum:
       name: mariadb-libs
       state: removed
   
-  - name: install mysql
+  - name: install mysql 8
     yum:
       name: ['mysql-community-devel*', 'mysql-community-server*', 'MySQL-python']
       state: present
   
-  - name: copy my.cnf
+  - name: copy simple my.cnf
     copy:
       src: ./my.cnf
       dest: /etc/my.cnf
@@ -45,15 +45,9 @@
   - debug:
      msg:  "temp password: {{ root_password.stdout_lines[0] }}"
 
-  - debug: 
-     msg:  "new password: {{ mysql_root_password }}"
-
   - name: update expired root user password
     command: mysql --user root --password={{ root_password.stdout }} --connect-expired-password --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';"
   
-  - debug: 
-     msg:  "new password: {{ mysql_root_password }}"
-
   - name: Ensure MySQL users are present.
     mysql_user:
       login_user: 'root'
