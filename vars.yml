@@ -1,6 +1,0 @@
-mysql.root.password: "NewPassword"
-
-mysql_users:
-  - name: brianv
-    pass: ABcd1234
-
