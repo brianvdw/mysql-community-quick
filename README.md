@@ -1,6 +1,6 @@
 # mysql-community-quick
 
-Ansible playbook for a quick MySQL 8 Community deploy on redhat7/centos7
+Ansible playbook for a quick MySQL 8 Community deploy on RedHat7/Centos7
 
 Please change vars in top of deploy.yml to suit.
 
