@@ -8,20 +8,15 @@ Vagrant.configure('2') do |config|
   end
 
   config.vm.define 'mysql1' do |machine|
-     #machine.vm.box = "ub18LTS"
-     #machine.vm.box = "centos7"
-     #machine.vm.box = "rhel7"
      #machine.vm.box = "generic/rhel7"
      machine.vm.box = "bento/centos-7"
   
-     machine.vm.hostname = "mysql1.home"
-     #machine.vm.synced_folder "/DatabaseMedia/", "/DatabaseMedia"
-     #machine.vm.synced_folder "/work/config-genie/", "/config-genie/"
+     machine.vm.hostname = "lab1"
   
      machine.vm.provision :shell, :inline => "sudo rm /etc/localtime && sudo ln -s /usr/share/zoneinfo/Pacific/Auckland /etc/localtime", run: "always"
      machine.vm.provision 'ansible' do |ansible|
       #ansible.playbook = 'playbook.yml'
-      ansible.playbook = 'p1.yml'
+      ansible.playbook = 'ping.yml'
        ansible.become = true
        ansible.host_key_checking = false
       end
